@@ -1,4 +1,5 @@
 import time
+import os
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -8,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import chromedriver_autoinstaller
 
 # Load credentials file
-credentials_file = "credentials.xlsx"
+credentials_file = os.path.join(os.path.dirname(__file__), "credentials.xlsx")
 
 chromedriver_autoinstaller.install()
 
@@ -23,15 +24,15 @@ wait = WebDriverWait(driver, 10)
 n = 0
 
 driver.get("https://www.grandefratello.mediaset.it/vota/")
-time.sleep(8)
+time.sleep(7)
 
 # Handle potential ads
-try:
-    ads_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[11]/div/div/a')))
-    if ads_button.is_displayed():
-        ads_button.click()
-except:
-    print("No ads found.")
+#try:
+#    ads_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[11]/div/div/a')))
+#    if ads_button.is_displayed():
+#        ads_button.click()
+#except:
+#    print("No ads found.")
 
 # Click "VAI AL TELEVOTO"
 try:
@@ -50,6 +51,16 @@ def vote(email, password):
         time.sleep(2)
     except:
         print(f"Accedi button not found for {email}, skipping login.")
+
+        try:
+            wait.until(
+                EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div[2]/div[1]/button/div/h3/span'))).click()
+            time.sleep(2)
+        except:
+            print("VAI AL TELEVOTO button not found, skipping...")
+
+        driver.switch_to.frame("modal-frame")
+
         return False
 
     try:
@@ -80,41 +91,20 @@ def vote(email, password):
         print(f"Successfully logged in with {email}")
     except:
         print(f"Login failed for {email}, skipping...")
+        wait.until(EC.element_to_be_clickable(
+            (By.XPATH, '/html/body/div[1]/div[2]/div[1]/div[2]/a'))).click()
         return False
 
     try:
         time.sleep(2)
-        wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[3]/div/div'))).click()
+        #change to Helena
+        wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div'))).click()
         time.sleep(1)
         wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/button'))).click()
         time.sleep(2)
     except:
         print("Voting elements not found, skipping...")
         return False
-
-    try:
-        vota_ancora_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div/div/div/img')))
-        if vota_ancora_button.is_displayed():
-            print("Second vote detected, proceeding...")
-            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/button'))).click()
-            time.sleep(1)
-
-            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[3]/div/div'))).click()
-            time.sleep(1)
-            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/button'))).click()
-            time.sleep(2)
-
-            print("Third vote detected, proceeding...")
-            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/button'))).click()
-            time.sleep(1)
-
-            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[3]/div/div'))).click()
-            time.sleep(1)
-            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/button'))).click()
-            time.sleep(2)
-
-    except:
-        print("No 'Vota ancora' button detected, assuming max votes reached.")
 
     try:
         logout_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/header/div/button')))
@@ -144,15 +134,17 @@ while True:
             if vote(email, password):  # If successful, remove from file
                 df.drop(index=index, inplace=True)  # Delete row immediately
                 success = True
-                print(f"Successfully voted and removed {email} from the list.")
                 break  # Exit loop after a successful vote to reload DataFrame
 
         if success:  # Only save if a row was removed
             df.to_excel(credentials_file, index=False)
+        else:
+            driver.quit()
+            exit()
         #n = n + 1
         #if n == 10:
         #    print("Sleeping for 5 minutes to avoid rate limits...")
-        #    time.sleep(300)
+        #    time.sleep(310)
         #    n = 0
 
     except Exception as e:

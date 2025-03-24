@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import chromedriver_autoinstaller
 
 # Load credentials file
-credentials_file = os.path.join(os.path.dirname(__file__), "credentials.xlsx")
+credentials_file = os.path.join(os.path.dirname(__file__), "credentials2.xlsx")
 
 chromedriver_autoinstaller.install()
 

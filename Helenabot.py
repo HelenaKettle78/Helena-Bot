@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import chromedriver_autoinstaller
 
 # Load credentials file
-credentials_file = os.path.join(os.path.dirname(__file__), "credentials2.xlsx")
+credentials_file = os.path.join(os.path.dirname(__file__), "credentials.xlsx")
 
 chromedriver_autoinstaller.install()
 
@@ -24,15 +24,15 @@ wait = WebDriverWait(driver, 10)
 n = 0
 
 driver.get("https://www.grandefratello.mediaset.it/vota/")
-time.sleep(7)
+time.sleep(8)
 
 # Handle potential ads
-#try:
-#    ads_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[11]/div/div/a')))
-#    if ads_button.is_displayed():
-#        ads_button.click()
-#except:
-#    print("No ads found.")
+try:
+    ads_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[11]/div/div/a')))
+    if ads_button.is_displayed():
+        ads_button.click()
+except:
+    print("No ads found.")
 
 # Click "VAI AL TELEVOTO"
 try:
@@ -97,7 +97,6 @@ def vote(email, password):
 
     try:
         time.sleep(2)
-        #change to Helena
         wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div'))).click()
         time.sleep(1)
         wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/button'))).click()
@@ -105,6 +104,30 @@ def vote(email, password):
     except:
         print("Voting elements not found, skipping...")
         return False
+
+    try:
+        vota_ancora_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div[1]/div/div/div/img')))
+        if vota_ancora_button.is_displayed():
+            print("Second vote detected, proceeding...")
+            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/button'))).click()
+            time.sleep(1)
+
+            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[3]/div/div'))).click()
+            time.sleep(1)
+            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/button'))).click()
+            time.sleep(2)
+
+            print("Third vote detected, proceeding...")
+            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/button'))).click()
+            time.sleep(1)
+
+            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[3]/div/div'))).click()
+            time.sleep(1)
+            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/button'))).click()
+            time.sleep(2)
+
+    except:
+        print("No 'Vota ancora' button detected, assuming max votes reached.")
 
     try:
         logout_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/header/div/button')))

@@ -9,12 +9,22 @@ from selenium.webdriver.support import expected_conditions as EC
 import chromedriver_autoinstaller
 
 # Load credentials file
-credentials_file = os.path.join(os.path.dirname(__file__), "credentials.xlsx")
+#credentials_file = os.path.join(os.path.dirname(__file__), "credentials.xlsx")
+
+# Get the directory where the executable is running
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Define the path to the credentials file
+credentials_file = os.path.join(base_dir, "credentials.xlsx")
 
 chromedriver_autoinstaller.install()
 
 # Selenium WebDriver setup
 chrome_options = Options()
+
+#chromedriver_path = chromedriver_autoinstaller.install()
+#chrome_options.binary_location = chromedriver_path
+
 chrome_options.add_argument("--start-maximized")
 chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 
@@ -24,7 +34,7 @@ wait = WebDriverWait(driver, 10)
 n = 0
 
 driver.get("https://www.grandefratello.mediaset.it/vota/")
-time.sleep(8)
+time.sleep(5)
 
 # Handle potential ads
 try:
@@ -96,11 +106,10 @@ def vote(email, password):
         return False
 
     try:
-        time.sleep(2)
-        wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div'))).click()
         time.sleep(1)
+        wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div'))).click()
         wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/button'))).click()
-        time.sleep(2)
+        time.sleep(1)
     except:
         print("Voting elements not found, skipping...")
         return False
@@ -113,16 +122,14 @@ def vote(email, password):
             time.sleep(1)
 
             wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div'))).click()
-            time.sleep(1)
             wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/button'))).click()
-            time.sleep(2)
+            time.sleep(1)
 
             print("Third vote detected, proceeding...")
             wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/button'))).click()
             time.sleep(1)
 
             wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[1]/div[2]/div/div'))).click()
-            time.sleep(1)
             wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/button'))).click()
             time.sleep(2)
 

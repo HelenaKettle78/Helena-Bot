@@ -15,7 +15,7 @@ import chromedriver_autoinstaller
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the path to the credentials file
-credentials_file = os.path.join(base_dir, "credentials_web.xlsx")
+credentials_file = os.path.join(base_dir, "credentials_app.xlsx")
 
 chromedriver_autoinstaller.install()
 
@@ -33,7 +33,8 @@ wait = WebDriverWait(driver, 10)
 
 n = 0
 
-driver.get("https://voting.mediasetinfinity.mediaset.it/sms.grandefratello.eliminazione.web/index.html")
+driver.get("https://voting.mediasetinfinity.mediaset.it/sms.grandefratello.eliminazione.app/index.html#app")
+#driver.get("https://voting.mediasetinfinity.mediaset.it/sms.grandefratello.eliminazione.web/index.html")
 time.sleep(3)
 
 def vote(email, password):

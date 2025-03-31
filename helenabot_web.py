@@ -8,6 +8,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import chromedriver_autoinstaller
 
+# Load credentials file
+#credentials_file = os.path.join(os.path.dirname(__file__), "credentials.xlsx")
+
 # Get the directory where the executable is running
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -37,7 +40,7 @@ def vote(email, password):
     """Attempts to vote using the given email and password."""
     try:
         wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div[1]/button'))).click()
-        time.sleep(2)
+        time.sleep(1)
     except:
         print(f"Accedi button not found for {email}, skipping login.")
         return False
@@ -60,7 +63,7 @@ def vote(email, password):
 
     try:
         wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div[2]/div[2]/div/div/form/div[2]/div[3]/div[6]/input'))).click()
-        time.sleep(2)
+        time.sleep(1)
     except:
         print(f"Invia button not found for {email}, skipping...")
         return False
@@ -86,7 +89,7 @@ def vote(email, password):
     try:
         logout_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/header/div/button')))
         logout_button.click()
-        time.sleep(2)
+        time.sleep(1)
     except:
         print("Logout button not found, continuing anyway.")
 

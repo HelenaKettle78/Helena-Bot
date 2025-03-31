@@ -89,7 +89,7 @@ def vote(email, password):
     try:
         logout_button = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/header/div/button')))
         logout_button.click()
-        time.sleep(1)
+        time.sleep(3)
     except:
         print("Logout button not found, continuing anyway.")
 
